@@ -18,13 +18,6 @@
 			remoteGlobalIDString = 4055480F3007CE8F006C534F;
 			remoteInfo = "Discont-AppTask";
 		};
-		405548283007CE91006C534F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 405548083007CE8F006C534F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4055480F3007CE8F006C534F;
-			remoteInfo = "Discont-AppTask";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -42,11 +35,6 @@
 		405548203007CE91006C534F /* Discont-AppTaskTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Discont-AppTaskTests";
-			sourceTree = "<group>";
-		};
-		4055482A3007CE91006C534F /* Discont-AppTaskUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Discont-AppTaskUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -67,13 +55,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		405548243007CE91006C534F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -82,7 +63,6 @@
 			children = (
 				40363D29300E3C9700DA4D2B /* Discont-AppTask */,
 				405548203007CE91006C534F /* Discont-AppTaskTests */,
-				4055482A3007CE91006C534F /* Discont-AppTaskUITests */,
 				405548113007CE8F006C534F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -140,34 +120,9 @@
 				405548203007CE91006C534F /* Discont-AppTaskTests */,
 			);
 			name = "Discont-AppTaskTests";
-			packageProductDependencies = (
-			);
 			productName = "Discont-AppTaskTests";
 			productReference = 4055481D3007CE91006C534F /* Discont-AppTaskTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		405548263007CE91006C534F /* Discont-AppTaskUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 405548373007CE91006C534F /* Build configuration list for PBXNativeTarget "Discont-AppTaskUITests" */;
-			buildPhases = (
-				405548233007CE91006C534F /* Sources */,
-				405548243007CE91006C534F /* Frameworks */,
-				405548253007CE91006C534F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				405548293007CE91006C534F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				4055482A3007CE91006C534F /* Discont-AppTaskUITests */,
-			);
-			name = "Discont-AppTaskUITests";
-			packageProductDependencies = (
-			);
-			productName = "Discont-AppTaskUITests";
-			productReference = 405548273007CE91006C534F /* Discont-AppTaskUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -186,10 +141,6 @@
 						CreatedOnToolsVersion = 26.6;
 					};
 					4055481C3007CE91006C534F = {
-						CreatedOnToolsVersion = 26.6;
-						TestTargetID = 4055480F3007CE8F006C534F;
-					};
-					405548263007CE91006C534F = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = 4055480F3007CE8F006C534F;
 					};
@@ -214,7 +165,6 @@
 			targets = (
 				4055480F3007CE8F006C534F /* Discont-AppTask */,
 				4055481C3007CE91006C534F /* Discont-AppTaskTests */,
-				405548263007CE91006C534F /* Discont-AppTaskUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -228,13 +178,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4055481B3007CE91006C534F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		405548253007CE91006C534F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -258,13 +201,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		405548233007CE91006C534F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -272,11 +208,6 @@
 			isa = PBXTargetDependency;
 			target = 4055480F3007CE8F006C534F /* Discont-AppTask */;
 			targetProxy = 4055481E3007CE91006C534F /* PBXContainerItemProxy */;
-		};
-		405548293007CE91006C534F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4055480F3007CE8F006C534F /* Discont-AppTask */;
-			targetProxy = 405548283007CE91006C534F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -510,46 +441,6 @@
 			};
 			name = Release;
 		};
-		405548383007CE91006C534F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KMHWK7748S;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.oelias.Discont-AppTaskUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Discont-AppTask";
-			};
-			name = Debug;
-		};
-		405548393007CE91006C534F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KMHWK7748S;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.oelias.Discont-AppTaskUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Discont-AppTask";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -580,15 +471,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		405548373007CE91006C534F /* Build configuration list for PBXNativeTarget "Discont-AppTaskUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				405548383007CE91006C534F /* Debug */,
-				405548393007CE91006C534F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -596,8 +478,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Oelias84/DesignSystem";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

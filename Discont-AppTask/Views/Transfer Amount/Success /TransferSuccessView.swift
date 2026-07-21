@@ -12,18 +12,17 @@ struct TransferSuccessView: View {
 
     @State var viewModel: ViewModel
     let onRepeat: () -> Void
-
-    @Binding var card: ItemModel
+    let card: ItemModel
 
     @Environment(\.dismiss) private var dismiss
     @State private var loopMode: CheckmarkAnimationView.LoopMode = .playOnce
     @State private var isShowingReceipt = false
     @State private var showSampleCreatedAlert = false
 
-    init(amount: String, recipientName: String, message: String, onRepeat: @escaping () -> Void, card: Binding<ItemModel>) {
+    init(amount: Decimal, recipientName: String, message: String, onRepeat: @escaping () -> Void, card: ItemModel) {
         _viewModel = State(initialValue: ViewModel(amount: amount, recipientName: recipientName, message: message))
         self.onRepeat = onRepeat
-        self._card = card
+        self.card = card
     }
 
     var body: some View {
@@ -37,7 +36,7 @@ struct TransferSuccessView: View {
                         .font(DSFont.heading2)
                         .foregroundStyle(Color.dark)
 
-                    Text("\(viewModel.amount)$")
+                    Text(viewModel.formattedAmount)
                         .font(DSFont.heading1)
                         .foregroundStyle(Color.dark)
 
@@ -72,13 +71,10 @@ struct TransferSuccessView: View {
             .padding()
             .padding(.bottom, 70)
 
-            ResizableDrawerView(title: "Operation details") {
+            ExpandableDrawerView(title: "Operation details") {
                 operationDetailsRows()
             }
             .padding(.bottom, 70)
-        }
-        .onAppear {
-            viewModel.applyDeduction(to: &card)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.lightGray)
@@ -118,7 +114,7 @@ struct TransferSuccessView: View {
 
         DSRawView(title: card.holderName, caption: "Withdrawal account", cardInfo: .init(suffix: card.suffix, type: .visa), dividerStyle: dividerStyle)
         DSRawView(title: viewModel.recipientName, caption: "Name of recipient", dividerStyle: dividerStyle)
-        DSRawView(title: "\(viewModel.amount)$", caption: "Transfer amount", dividerStyle: dividerStyle)
+        DSRawView(title: viewModel.formattedAmount, caption: "Transfer amount", dividerStyle: dividerStyle)
         DSRawView(title: "No commission", caption: "Commission", dividerStyle: dividerStyle)
         DSRawView(title: viewModel.completedAt, caption: "Date", dividerStyle: dividerStyle)
 
@@ -131,20 +127,17 @@ struct TransferSuccessView: View {
 #Preview {
     NavigationStack {
         TransferSuccessView(
-            amount: "100",
+            amount: 100,
             recipientName: "Alexander Dmitrievich",
             message: "Happy birthday!",
             onRepeat: {},
-            card: .constant(
-                ItemModel(
-                    id: UUID(),
-                    title: "Sample",
-                    amount: 1234.56,
-                    balance: "1,234.56$",
-                    suffix: "1234",
-                    holderName: "Alex",
-                    phoneNumber: "0547897898"
-                )
+            card: ItemModel(
+                id: UUID(),
+                title: "Sample",
+                amount: 1234.56,
+                suffix: "1234",
+                holderName: "Alex",
+                phoneNumber: "0547897898"
             )
         )
     }

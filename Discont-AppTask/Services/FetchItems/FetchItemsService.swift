@@ -22,7 +22,7 @@ class FetchItemsService: FetchItemsProtocol {
 
         return (0..<sampleTitles.count).map { index in
             let rawAmount = Double.random(in: -250...500)
-            let amount = (rawAmount * 100).rounded() / 100
+            let amount = Decimal((rawAmount * 100).rounded() / 100)
             let suffix = String(format: "%04d", Int.random(in: 0...9999))
             let phoneNumber = String(format: "+995 5%02d %02d %02d", Int.random(in: 0...99), Int.random(in: 0...99), Int.random(in: 0...99))
 
@@ -30,7 +30,6 @@ class FetchItemsService: FetchItemsProtocol {
                 id: UUID(),
                 title: sampleTitles[index % sampleTitles.count],
                 amount: amount,
-                balance: String(format: "%.2f$", amount),
                 suffix: suffix,
                 holderName: sampleHolderNames[index % sampleHolderNames.count],
                 phoneNumber: phoneNumber

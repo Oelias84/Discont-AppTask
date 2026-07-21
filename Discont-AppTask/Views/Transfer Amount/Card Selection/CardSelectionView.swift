@@ -14,6 +14,7 @@ struct CardSelectionView: View {
     @State private var isEnteringAmount = false
     @State private var showSuccess = false
     @State private var isRepeatingPayment = false
+    @State private var confirmedAmount: Decimal = 0
     @FocusState private var isMessageFocused: Bool
 
     var body: some View {
@@ -23,7 +24,7 @@ struct CardSelectionView: View {
                 case .loading:
                     ProgressView()
 
-                case .zeroStare:
+                case .zeroState:
                     VStack {
                         Image(systemName: "tray")
                         Text("No cards found")
@@ -58,7 +59,7 @@ struct CardSelectionView: View {
             VStack(spacing: 12) {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: 12) {
-                        ForEach(viewModel.itemStore.items) { item in
+                        ForEach(viewModel.sortedItems) { item in
                             BankCardView(
                                 title: item.title,
                                 balance: item.balance,
@@ -76,7 +77,7 @@ struct CardSelectionView: View {
                 .scrollIndicators(.hidden)
 
                 HStack(spacing: 8) {
-                    ForEach(viewModel.itemStore.items) { item in
+                    ForEach(viewModel.sortedItems) { item in
                         Circle()
                             .fill(item.id == viewModel.currentId ? Color.blue : Color.secondary.opacity(0.3))
                             .frame(width: 6, height: 6)
@@ -101,8 +102,8 @@ struct CardSelectionView: View {
                     isEnteringAmount = true
                     
                 } label: {
-                    Text(viewModel.sum.isEmpty ? "from 10$ to 99 999$" : "\(viewModel.sum)$")
-                        .foregroundStyle(viewModel.sum.isEmpty ? Color.dark.opacity(0.4) : Color.dark)
+                    Text(viewModel.sum == nil ? "from 10$ to 99 999$" : "\(viewModel.formattedSum)$")
+                        .foregroundStyle(viewModel.sum == nil ? Color.dark.opacity(0.4) : Color.dark)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .dsTextField(title: "Sum")
@@ -138,18 +139,19 @@ struct CardSelectionView: View {
             Spacer()
 
             Button(viewModel.continueButtonText) {
-                guard viewModel.attemptTransfer() else { return }
+                guard let amount = viewModel.attemptTransfer() else { return }
+                confirmedAmount = amount
                 showSuccess = true
             }
             .padding(.bottom)
             .buttonStyle(.primary)
             .navigationDestination(isPresented: $showSuccess) {
                 TransferSuccessView(
-                    amount: viewModel.sum,
+                    amount: confirmedAmount,
                     recipientName: card.wrappedValue.holderName,
                     message: viewModel.message,
                     onRepeat: { isRepeatingPayment = true },
-                    card: card
+                    card: card.wrappedValue
                 )
             }
             .onChange(of: showSuccess) { _, isShowingSuccess in
@@ -158,7 +160,7 @@ struct CardSelectionView: View {
                 if isRepeatingPayment {
                     isRepeatingPayment = false
                 } else {
-                    viewModel.sum = ""
+                    viewModel.sum = nil
                     viewModel.message = ""
                 }
             }

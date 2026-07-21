@@ -8,31 +8,120 @@
 import XCTest
 @testable import Discont_AppTask
 
-final class Discont_AppTaskTests: XCTestCase {
+private struct MockFetchItemsService: FetchItemsProtocol {
+    var items: [ItemModel] = []
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func fetchData() async throws -> [ItemModel] {
+        items
+    }
+}
+
+private func makeItem(title: String = "Salary card", amount: Decimal = 100) -> ItemModel {
+    ItemModel(id: UUID(), title: title, amount: amount, suffix: "1234", holderName: "Holder", phoneNumber: "000")
+}
+
+@MainActor
+final class CardSelectionViewModelTests: XCTestCase {
+
+    func testAttemptTransfer_withNoAmount_setsAlertAndReturnsNil() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 100)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = nil
+
+        let result = viewModel.attemptTransfer()
+
+        XCTAssertNil(result)
+        XCTAssertEqual(viewModel.alert?.title, "Amount required")
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    func testAttemptTransfer_withAmountExceedingBalance_setsAlertAndReturnsNil() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 50)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = 75
+
+        let result = viewModel.attemptTransfer()
+
+        XCTAssertNil(result)
+        XCTAssertEqual(viewModel.alert?.title, "Insufficient funds")
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+    func testAttemptTransfer_withValidAmount_returnsAmountAndSetsNoAlert() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 200)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = 150
+
+        let result = viewModel.attemptTransfer()
+
+        XCTAssertEqual(result, 150)
+        XCTAssertNil(viewModel.alert)
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testAttemptTransfer_withValidAmount_deductsCardBalance() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 200)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = 150
+
+        _ = viewModel.attemptTransfer()
+
+        XCTAssertEqual(viewModel.itemStore.items[0].amount, 50)
     }
 
+    func testAttemptTransfer_withInsufficientFunds_doesNotDeductCardBalance() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 50)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = 75
+
+        _ = viewModel.attemptTransfer()
+
+        XCTAssertEqual(viewModel.itemStore.items[0].amount, 50)
+    }
+
+    func testFetchItems_withResults_setsDataReceivedState() async {
+        let items = [makeItem(title: "B card"), makeItem(title: "A card")]
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService(items: items))
+
+        await viewModel.fetchItems()
+
+        XCTAssertEqual(viewModel.screenState, .dataReceived)
+        XCTAssertEqual(viewModel.itemStore.items.count, 2)
+    }
+
+    func testFetchItems_withNoResults_setsZeroState() async {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService(items: []))
+
+        await viewModel.fetchItems()
+
+        XCTAssertEqual(viewModel.screenState, .zeroState)
+    }
+
+    func testSortedItems_areOrderedByTitle() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        viewModel.itemStore.items = [
+            makeItem(title: "Savings"),
+            makeItem(title: "Business"),
+            makeItem(title: "Main")
+        ]
+
+        XCTAssertEqual(viewModel.sortedItems.map(\.title), ["Business", "Main", "Savings"])
+    }
+}
+
+@MainActor
+final class TransferSuccessViewModelTests: XCTestCase {
+
+    func testFormattedAmount_includesDollarSuffix() {
+        let viewModel = TransferSuccessView.ViewModel(amount: 100, recipientName: "Alex", message: "")
+
+        XCTAssertEqual(viewModel.formattedAmount, "100$")
+    }
 }

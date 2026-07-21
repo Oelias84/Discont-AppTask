@@ -12,11 +12,11 @@ extension TransferSuccessView {
     @Observable
     class ViewModel {
 
-        let amount: String
+        let amount: Decimal
         let recipientName: String
         let message: String
 
-        init(amount: String, recipientName: String, message: String) {
+        init(amount: Decimal, recipientName: String, message: String) {
             self.amount = amount
             self.recipientName = recipientName
             self.message = message
@@ -26,10 +26,8 @@ extension TransferSuccessView {
             Date.now.formatted(date: .abbreviated, time: .shortened)
         }
 
-        func applyDeduction(to card: inout ItemModel) {
-            guard let transferredAmount = Double(amount) else { return }
-            card.amount -= transferredAmount
-            card.balance = String(format: "%.2f$", card.amount)
+        var formattedAmount: String {
+            amount.formatted(.number.precision(.fractionLength(0...2))) + "$"
         }
     }
 }

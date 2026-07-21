@@ -10,9 +10,12 @@ import Foundation
 struct ItemModel: Identifiable, Hashable {
     let id: UUID
     var title: String
-    var amount: Double
-    var balance: String
+    var amount: Decimal
     var suffix: String
     var holderName: String
     var phoneNumber: String
+
+    var balance: String {
+        amount.formatted(.number.precision(.fractionLength(2))) + "$"
+    }
 }

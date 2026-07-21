@@ -9,9 +9,9 @@ import SwiftUI
 
 extension CardSelectionView {
 
-    enum ScreenState {
+    enum ScreenState: Equatable {
         case loading
-        case zeroStare
+        case zeroState
         case dataReceived
     }
 
@@ -22,7 +22,7 @@ extension CardSelectionView {
         var alert: AlertItem?
         var screenState: ScreenState = .loading
         var currentId: ItemModel.ID?
-        var sum: String = ""
+        var sum: Decimal?
         var message: String = ""
 
         let service: FetchItemsProtocol
@@ -34,22 +34,37 @@ extension CardSelectionView {
         var sortedItems: [ItemModel] {
             itemStore.items.sorted { $0.title < $1.title }
         }
-        
-        var continueButtonText: String {
-            sum.isEmpty ? "Transfer Money" : "Transfer \(sum)$"
+
+        var formattedSum: String {
+            guard let sum else { return "" }
+            return sum.formatted(.number.precision(.fractionLength(0...2)))
         }
 
-        func attemptTransfer() -> Bool {
-            guard !sum.trimmingCharacters(in: .whitespaces).isEmpty else {
+        var continueButtonText: String {
+            sum == nil ? "Transfer Money" : "Transfer \(formattedSum)$"
+        }
+
+        func attemptTransfer() -> Decimal? {
+            guard let sum, sum > 0 else {
                 alert = AlertItem(
                     id: UUID(),
                     title: "Amount required",
                     message: "Please enter an amount to transfer."
                 )
-                return false
+                return nil
             }
 
-            return true
+            guard let index = itemStore.items.firstIndex(where: { $0.id == currentId }), sum <= itemStore.items[index].amount else {
+                alert = AlertItem(
+                    id: UUID(),
+                    title: "Insufficient funds",
+                    message: "This card's balance is too low for this transfer."
+                )
+                return nil
+            }
+
+            itemStore.items[index].amount -= sum
+            return sum
         }
 
         func fetchItems() async {
@@ -60,7 +75,7 @@ extension CardSelectionView {
                 alert = AlertItem(id: UUID(), title: "Error", message: error.localizedDescription)
             }
 
-            screenState = itemStore.items.isEmpty ? .zeroStare : .dataReceived
+            screenState = itemStore.items.isEmpty ? .zeroState : .dataReceived
         }
     }
 }
