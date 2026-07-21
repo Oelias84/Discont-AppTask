@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		40363D51300E6C1E00DA4D2B /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 40363D50300E6C1E00DA4D2B /* DesignSystem */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4055481E3007CE91006C534F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -30,7 +34,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		405548123007CE8F006C534F /* Discont-AppTask */ = {
+		40363D29300E3C9700DA4D2B /* Discont-AppTask */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Discont-AppTask";
 			sourceTree = "<group>";
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40363D51300E6C1E00DA4D2B /* DesignSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +80,7 @@
 		405548073007CE8F006C534F = {
 			isa = PBXGroup;
 			children = (
-				405548123007CE8F006C534F /* Discont-AppTask */,
+				40363D29300E3C9700DA4D2B /* Discont-AppTask */,
 				405548203007CE91006C534F /* Discont-AppTaskTests */,
 				4055482A3007CE91006C534F /* Discont-AppTaskUITests */,
 				405548113007CE8F006C534F /* Products */,
@@ -108,10 +113,11 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				405548123007CE8F006C534F /* Discont-AppTask */,
+				40363D29300E3C9700DA4D2B /* Discont-AppTask */,
 			);
 			name = "Discont-AppTask";
 			packageProductDependencies = (
+				40363D50300E6C1E00DA4D2B /* DesignSystem */,
 			);
 			productName = "Discont-AppTask";
 			productReference = 405548103007CE8F006C534F /* Discont-AppTask.app */;
@@ -170,6 +176,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
@@ -195,6 +204,9 @@
 			);
 			mainGroup = 405548073007CE8F006C534F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				40363D4F300E6C1E00DA4D2B /* XCRemoteSwiftPackageReference "DesignSystem" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 405548113007CE8F006C534F /* Products */;
 			projectDirPath = "";
@@ -578,6 +590,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		40363D4F300E6C1E00DA4D2B /* XCRemoteSwiftPackageReference "DesignSystem" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Oelias84/DesignSystem";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		40363D50300E6C1E00DA4D2B /* DesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40363D4F300E6C1E00DA4D2B /* XCRemoteSwiftPackageReference "DesignSystem" */;
+			productName = DesignSystem;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 405548083007CE8F006C534F /* Project object */;
 }

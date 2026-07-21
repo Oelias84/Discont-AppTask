@@ -11,7 +11,7 @@ import SwiftUI
 struct Discont_AppTaskApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CardSelectionView()
         }
     }
 }
