@@ -8,5 +8,5 @@
 import Foundation
 
 protocol FetchItemsProtocol {
-    func fetchData() async throws -> [ItemModel]
+    func fetchData() async throws -> [CardModel]
 }

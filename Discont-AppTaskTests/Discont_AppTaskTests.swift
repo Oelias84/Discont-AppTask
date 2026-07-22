@@ -9,15 +9,15 @@ import XCTest
 @testable import Discont_AppTask
 
 private struct MockFetchItemsService: FetchItemsProtocol {
-    var items: [ItemModel] = []
+    var items: [CardModel] = []
 
-    func fetchData() async throws -> [ItemModel] {
+    func fetchData() async throws -> [CardModel] {
         items
     }
 }
 
-private func makeItem(title: String = "Salary card", amount: Decimal = 100) -> ItemModel {
-    ItemModel(id: UUID(), title: title, amount: amount, suffix: "1234", holderName: "Holder", phoneNumber: "000")
+private func makeItem(title: String = "Salary card", amount: Decimal = 100) -> CardModel {
+    CardModel(id: UUID(), title: title, amount: amount, suffix: "1234", holderName: "Holder", phoneNumber: "000")
 }
 
 @MainActor

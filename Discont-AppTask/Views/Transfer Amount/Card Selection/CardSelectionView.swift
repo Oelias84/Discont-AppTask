@@ -54,7 +54,7 @@ struct CardSelectionView: View {
     }
 
     @ViewBuilder
-    private func content(for card: Binding<ItemModel>) -> some View {
+    private func content(for card: Binding<CardModel>) -> some View {
         VStack(spacing: 16) {
             VStack(spacing: 12) {
                 ScrollView(.horizontal) {

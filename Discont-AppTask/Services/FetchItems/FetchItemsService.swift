@@ -17,7 +17,7 @@ class FetchItemsService: FetchItemsProtocol {
         "Alexander Dmitrievich", "Maria Ivanova", "John Carter", "Sofia Petrova"
     ]
 
-    func fetchData() async throws -> [ItemModel] {
+    func fetchData() async throws -> [CardModel] {
         try await Task.sleep(nanoseconds: 800_000_000) // simulate network latency
 
         return (0..<sampleTitles.count).map { index in
@@ -26,7 +26,7 @@ class FetchItemsService: FetchItemsProtocol {
             let suffix = String(format: "%04d", Int.random(in: 0...9999))
             let phoneNumber = String(format: "+995 5%02d %02d %02d", Int.random(in: 0...99), Int.random(in: 0...99), Int.random(in: 0...99))
 
-            return ItemModel(
+            return CardModel(
                 id: UUID(),
                 title: sampleTitles[index % sampleTitles.count],
                 amount: amount,

@@ -12,14 +12,14 @@ struct TransferSuccessView: View {
 
     @State var viewModel: ViewModel
     let onRepeat: () -> Void
-    let card: ItemModel
+    let card: CardModel
 
     @Environment(\.dismiss) private var dismiss
     @State private var loopMode: CheckmarkAnimationView.LoopMode = .playOnce
     @State private var isShowingReceipt = false
     @State private var showSampleCreatedAlert = false
 
-    init(amount: Decimal, recipientName: String, message: String, onRepeat: @escaping () -> Void, card: ItemModel) {
+    init(amount: Decimal, recipientName: String, message: String, onRepeat: @escaping () -> Void, card: CardModel) {
         _viewModel = State(initialValue: ViewModel(amount: amount, recipientName: recipientName, message: message))
         self.onRepeat = onRepeat
         self.card = card
@@ -131,7 +131,7 @@ struct TransferSuccessView: View {
             recipientName: "Alexander Dmitrievich",
             message: "Happy birthday!",
             onRepeat: {},
-            card: ItemModel(
+            card: CardModel(
                 id: UUID(),
                 title: "Sample",
                 amount: 1234.56,

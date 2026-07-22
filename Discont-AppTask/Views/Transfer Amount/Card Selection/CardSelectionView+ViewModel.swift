@@ -18,10 +18,10 @@ extension CardSelectionView {
     @Observable
     class ViewModel {
 
-        var itemStore = ItemStore()
+        var itemStore = CardsStore()
         var alert: AlertItem?
         var screenState: ScreenState = .loading
-        var currentId: ItemModel.ID?
+        var currentId: CardModel.ID?
         var sum: Decimal?
         var message: String = ""
 
@@ -31,7 +31,7 @@ extension CardSelectionView {
             self.service = service
         }
 
-        var sortedItems: [ItemModel] {
+        var sortedItems: [CardModel] {
             itemStore.items.sorted { $0.title < $1.title }
         }
 
