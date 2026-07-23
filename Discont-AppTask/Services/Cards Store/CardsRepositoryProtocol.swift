@@ -10,4 +10,6 @@ import Foundation
 protocol CardsRepositoryProtocol {
     func card(id: CardModel.ID) -> CardModel?
     func updateCard(_ card: CardModel)
+    func transaction(cardID: CardModel.ID, transactionID: Transaction.ID) -> Transaction?
+    func updateTransaction(cardID: CardModel.ID, _ transaction: Transaction)
 }

@@ -82,6 +82,10 @@ extension TransactionsListView {
             }
         }
 
+        func makeDetailViewModel(for transaction: Transaction) -> TransactionDetailView.ViewModel {
+            TransactionDetailView.ViewModel(repository: cardsStore, cardID: cardID, transaction: transaction)
+        }
+
         func fetchTransactions() async {
             guard let card = cardsStore.card(id: cardID) else { return }
 

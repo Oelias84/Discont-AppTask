@@ -26,25 +26,29 @@ struct TransactionsListView: View {
 
             case .dataReceived:
                 List(viewModel.sortedTransactions) { transaction in
-                    let formattedAmount = transaction.amount.formatted(.number.precision(.fractionLength(0...2)))
+                    NavigationLink {
+                        TransactionDetailView(viewModel: viewModel.makeDetailViewModel(for: transaction))
+                    } label: {
+                        let formattedAmount = transaction.amount.formatted(.number.precision(.fractionLength(0...2)))
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(transaction.title)
-                                .font(DSFont.heading2Regular)
-                                .foregroundStyle(Color.dark)
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(transaction.title)
+                                    .font(DSFont.heading2Regular)
+                                    .foregroundStyle(Color.dark)
 
-                            Spacer()
+                                Spacer()
 
-                            Text("\(formattedAmount)$")
-                                .foregroundStyle(transaction.amount < 0 ? Color.dark : Color.main)
+                                Text("\(formattedAmount)$")
+                                    .foregroundStyle(transaction.amount < 0 ? Color.dark : Color.main)
+                            }
+
+                            Text(transaction.category)
+                                .font(DSFont.caption)
+                                .foregroundStyle(Color.dark.opacity(0.6))
                         }
-
-                        Text(transaction.category)
-                            .font(DSFont.caption)
-                            .foregroundStyle(Color.dark.opacity(0.6))
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
                 .listStyle(.plain)
                 .searchable(text: $viewModel.serachText)

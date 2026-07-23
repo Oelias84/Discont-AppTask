@@ -82,16 +82,14 @@ struct TransferSuccessView: View {
                 Spacer()
             }
             .padding()
-            .padding(.bottom, 70)
 
             ExpandableDrawerView(title: "Operation details") {
                 operationDetailsRows()
             }
-            .padding(.bottom, 70)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.lightGray)
-        .overlay(alignment: .bottom) {
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack {
                 Button("To Main") {
                     dismiss()
