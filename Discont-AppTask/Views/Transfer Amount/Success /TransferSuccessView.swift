@@ -10,19 +10,32 @@ import DesignSystem
 
 struct TransferSuccessView: View {
 
-    @State var viewModel: ViewModel
-    let onRepeat: () -> Void
-    let card: CardModel
-
     @Environment(\.dismiss) private var dismiss
+
+    @State var viewModel: ViewModel
     @State private var loopMode: CheckmarkAnimationView.LoopMode = .playOnce
     @State private var isShowingReceipt = false
     @State private var showSampleCreatedAlert = false
 
-    init(amount: Decimal, recipientName: String, message: String, onRepeat: @escaping () -> Void, card: CardModel) {
-        _viewModel = State(initialValue: ViewModel(amount: amount, recipientName: recipientName, message: message))
+    let onRepeat: () -> Void
+
+    init(
+        amount: Decimal,
+        recipientName: String,
+        message: String,
+        onRepeat: @escaping () -> Void,
+        card: CardModel
+    ) {
+        _viewModel = State(
+            initialValue: ViewModel(
+                card: card,
+                amount: amount,
+                recipientName: recipientName,
+                message: message
+            )
+        )
+        
         self.onRepeat = onRepeat
-        self.card = card
     }
 
     var body: some View {
@@ -112,7 +125,7 @@ struct TransferSuccessView: View {
     private func operationDetailsRows(isDashed: Bool = false) -> some View {
         let dividerStyle: DSRawView.DividerStyle = isDashed ? .dashed : .solid
 
-        DSRawView(title: card.holderName, caption: "Withdrawal account", cardInfo: .init(suffix: card.suffix, type: .visa), dividerStyle: dividerStyle)
+        DSRawView(title: viewModel.card.holderName, caption: "Withdrawal account", cardInfo: .init(suffix: viewModel.card.suffix, type: .visa), dividerStyle: dividerStyle)
         DSRawView(title: viewModel.recipientName, caption: "Name of recipient", dividerStyle: dividerStyle)
         DSRawView(title: viewModel.formattedAmount, caption: "Transfer amount", dividerStyle: dividerStyle)
         DSRawView(title: "No commission", caption: "Commission", dividerStyle: dividerStyle)

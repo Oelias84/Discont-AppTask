@@ -9,14 +9,22 @@ import SwiftUI
 
 extension TransferSuccessView {
 
+    @MainActor
     @Observable
     class ViewModel {
-
+        
+        let card: CardModel
         let amount: Decimal
         let recipientName: String
         let message: String
 
-        init(amount: Decimal, recipientName: String, message: String) {
+        init(
+            card: CardModel,
+            amount: Decimal,
+            recipientName: String,
+            message: String
+        ) {
+            self.card = card
             self.amount = amount
             self.recipientName = recipientName
             self.message = message

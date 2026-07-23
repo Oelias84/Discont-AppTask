@@ -1,5 +1,5 @@
 //
-//  CardModel.swift
+//  ItemModel.swift
 //  Discont-AppTask
 //
 //  Created by Ofir Elias on 20/07/2026.
@@ -14,6 +14,7 @@ struct CardModel: Identifiable, Hashable {
     var suffix: String
     var holderName: String
     var phoneNumber: String
+    var transactions: [Transaction] = []
 
     var balance: String {
         amount.formatted(.number.precision(.fractionLength(2))) + "$"

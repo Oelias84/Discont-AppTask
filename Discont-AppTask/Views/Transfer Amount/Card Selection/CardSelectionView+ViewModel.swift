@@ -15,17 +15,31 @@ extension CardSelectionView {
         case dataReceived
     }
 
+    enum Destination: Identifiable, Hashable {
+        case enterAmount
+        case success(amount: Decimal)
+        case transactions
+
+        var id: Self { self }
+    }
+
+    @MainActor
     @Observable
     class ViewModel {
 
         var itemStore = CardsStore()
-        var alert: AlertItem?
-        var screenState: ScreenState = .loading
+        
+        var destination: Destination?
+        var transactionsViewModel: TransactionsListView.ViewModel?
+        
         var currentId: CardModel.ID?
         var sum: Decimal?
         var message: String = ""
 
-        let service: FetchItemsProtocol
+        var screenState: ScreenState = .loading
+        var alert: AlertItem?
+
+        private let service: FetchItemsProtocol
 
         init(service: FetchItemsProtocol) {
             self.service = service
@@ -44,8 +58,8 @@ extension CardSelectionView {
             sum == nil ? "Transfer Money" : "Transfer \(formattedSum)$"
         }
 
-        func attemptTransfer() -> Decimal? {
-            guard let sum, sum > 0 else {
+        func attemptTransfer(recipientName: String) -> Decimal? {
+            guard let sum, sum >= 0 else {
                 alert = AlertItem(
                     id: UUID(),
                     title: "Amount required",
@@ -64,7 +78,40 @@ extension CardSelectionView {
             }
 
             itemStore.items[index].amount -= sum
+
+            let transaction = Transaction(
+                id: UUID(),
+                title: "Transfer to \(recipientName)",
+                amount: -sum,
+                currency: "USD",
+                status: .completed,
+                date: .now,
+                recipientName: recipientName,
+                category: "Transfer",
+                note: message
+            )
+            
+            itemStore.items[index].transactions.append(transaction)
+
+            destination = .success(amount: sum)
+            
             return sum
+        }
+
+        func showTransactions() {
+            guard let currentId else { return }
+            
+            let transactionsService = FetchTransactionsService()
+            
+            let transactionsViewModel = TransactionsListView.ViewModel(
+                cardsStore: itemStore,
+                cardID: currentId,
+                service: transactionsService
+            )
+            
+            self.transactionsViewModel = transactionsViewModel
+
+            destination = .transactions
         }
 
         func fetchItems() async {

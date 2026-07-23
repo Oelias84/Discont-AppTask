@@ -10,11 +10,8 @@ import DesignSystem
 
 struct CardSelectionView: View {
 
-    @State var viewModel = ViewModel(service: FetchItemsService())
-    @State private var isEnteringAmount = false
-    @State private var showSuccess = false
+    @State var viewModel: ViewModel
     @State private var isRepeatingPayment = false
-    @State private var confirmedAmount: Decimal = 0
     @FocusState private var isMessageFocused: Bool
 
     var body: some View {
@@ -56,38 +53,14 @@ struct CardSelectionView: View {
     @ViewBuilder
     private func content(for card: Binding<CardModel>) -> some View {
         VStack(spacing: 16) {
-            VStack(spacing: 12) {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 12) {
-                        ForEach(viewModel.sortedItems) { item in
-                            BankCardView(
-                                title: item.title,
-                                balance: item.balance,
-                                suffix: item.suffix
-                            )
-                            .id(item.id)
-                            .containerRelativeFrame(.horizontal)
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .frame(height: 194)
-                .scrollTargetBehavior(.viewAligned)
-                .scrollPosition(id: $viewModel.currentId)
-                .scrollIndicators(.hidden)
+            
+            CardCarouselView(items: viewModel.sortedItems, currentId: $viewModel.currentId)
 
-                HStack(spacing: 8) {
-                    ForEach(viewModel.sortedItems) { item in
-                        Circle()
-                            .fill(item.id == viewModel.currentId ? Color.blue : Color.secondary.opacity(0.3))
-                            .frame(width: 6, height: 6)
-                    }
-                }
-            }
-
-            TextField("Card name", text: card.title)
-                .dsTextField(title: "Card name")
-
+            DSRawView(
+                title: card.wrappedValue.title,
+                caption: "Card name"
+            )
+            
             DSRawView(
                 title: card.wrappedValue.phoneNumber,
                 caption: card.wrappedValue.holderName,
@@ -99,8 +72,7 @@ struct CardSelectionView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 Button {
-                    isEnteringAmount = true
-                    
+                    viewModel.destination = .enterAmount
                 } label: {
                     Text(viewModel.sum == nil ? "from 10$ to 99 999$" : "\(viewModel.formattedSum)$")
                         .foregroundStyle(viewModel.sum == nil ? Color.dark.opacity(0.4) : Color.dark)
@@ -112,15 +84,8 @@ struct CardSelectionView: View {
                     .font(DSFont.caption)
                     .foregroundStyle(Color.dark.opacity(0.6))
             }
-            .navigationDestination(isPresented: $isEnteringAmount) {
-                EnterAmountView(
-                    cardTitle: card.wrappedValue.title,
-                    cardBalance: card.wrappedValue.balance,
-                    amount: $viewModel.sum
-                )
-            }
             .padding(.bottom, 16)
-
+            
             TextField("Message to the recipient", text: $viewModel.message, axis: .vertical)
                 .lineLimit(2, reservesSpace: true)
                 .focused($isMessageFocused)
@@ -137,38 +102,56 @@ struct CardSelectionView: View {
                 }
 
             Spacer()
-
-            Button(viewModel.continueButtonText) {
-                guard let amount = viewModel.attemptTransfer() else { return }
-                confirmedAmount = amount
-                showSuccess = true
+            
+            Button("Transactions") {
+                viewModel.showTransactions()
             }
-            .padding(.bottom)
             .buttonStyle(.primary)
-            .navigationDestination(isPresented: $showSuccess) {
+            
+            Button(viewModel.continueButtonText) {
+                _ = viewModel.attemptTransfer(recipientName: card.wrappedValue.holderName)
+            }
+            .buttonStyle(.primary)
+            .padding(.bottom)
+        }
+        .padding([.top, .horizontal])
+        .navigationDestination(item: $viewModel.destination) { destination in
+            switch destination {
+            case .enterAmount:
+                EnterAmountView(
+                    cardTitle: card.wrappedValue.title,
+                    cardBalance: card.wrappedValue.balance,
+                    amount: $viewModel.sum
+                )
+
+            case .success(let amount):
                 TransferSuccessView(
-                    amount: confirmedAmount,
+                    amount: amount,
                     recipientName: card.wrappedValue.holderName,
                     message: viewModel.message,
                     onRepeat: { isRepeatingPayment = true },
                     card: card.wrappedValue
                 )
-            }
-            .onChange(of: showSuccess) { _, isShowingSuccess in
-                guard !isShowingSuccess else { return }
 
-                if isRepeatingPayment {
-                    isRepeatingPayment = false
-                } else {
-                    viewModel.sum = nil
-                    viewModel.message = ""
+            case .transactions:
+                if let transactionsViewModel = viewModel.transactionsViewModel {
+                    TransactionsListView(viewModel: transactionsViewModel)
                 }
             }
         }
-        .padding([.top, .horizontal])
+        .onChange(of: viewModel.destination) { oldValue, newValue in
+            guard newValue == nil, case .success = oldValue else { return }
+
+            if isRepeatingPayment {
+                isRepeatingPayment = false
+            } else {
+                viewModel.sum = nil
+                viewModel.message = ""
+            }
+        }
     }
 }
 
 #Preview {
-    CardSelectionView()
+    CardSelectionView(viewModel: .init(service: FetchItemsService()))
 }

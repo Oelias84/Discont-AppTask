@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct Discont_AppTaskApp: App {
+    
+    let cardViewModel = CardSelectionView.ViewModel(service: FetchItemsService())
+    
     var body: some Scene {
         WindowGroup {
-            CardSelectionView()
+            CardSelectionView(viewModel: cardViewModel)
         }
     }
 }

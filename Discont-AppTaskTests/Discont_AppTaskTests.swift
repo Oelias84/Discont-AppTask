@@ -30,7 +30,7 @@ final class CardSelectionViewModelTests: XCTestCase {
         viewModel.currentId = card.id
         viewModel.sum = nil
 
-        let result = viewModel.attemptTransfer()
+        let result = viewModel.attemptTransfer(recipientName: "Alex")
 
         XCTAssertNil(result)
         XCTAssertEqual(viewModel.alert?.title, "Amount required")
@@ -43,7 +43,7 @@ final class CardSelectionViewModelTests: XCTestCase {
         viewModel.currentId = card.id
         viewModel.sum = 75
 
-        let result = viewModel.attemptTransfer()
+        let result = viewModel.attemptTransfer(recipientName: "Alex")
 
         XCTAssertNil(result)
         XCTAssertEqual(viewModel.alert?.title, "Insufficient funds")
@@ -56,7 +56,7 @@ final class CardSelectionViewModelTests: XCTestCase {
         viewModel.currentId = card.id
         viewModel.sum = 150
 
-        let result = viewModel.attemptTransfer()
+        let result = viewModel.attemptTransfer(recipientName: "Alex")
 
         XCTAssertEqual(result, 150)
         XCTAssertNil(viewModel.alert)
@@ -69,7 +69,7 @@ final class CardSelectionViewModelTests: XCTestCase {
         viewModel.currentId = card.id
         viewModel.sum = 150
 
-        _ = viewModel.attemptTransfer()
+        _ = viewModel.attemptTransfer(recipientName: "Alex")
 
         XCTAssertEqual(viewModel.itemStore.items[0].amount, 50)
     }
@@ -81,9 +81,23 @@ final class CardSelectionViewModelTests: XCTestCase {
         viewModel.currentId = card.id
         viewModel.sum = 75
 
-        _ = viewModel.attemptTransfer()
+        _ = viewModel.attemptTransfer(recipientName: "Alex")
 
         XCTAssertEqual(viewModel.itemStore.items[0].amount, 50)
+    }
+
+    func testAttemptTransfer_withValidAmount_recordsTransactionOnCard() {
+        let viewModel = CardSelectionView.ViewModel(service: MockFetchItemsService())
+        let card = makeItem(amount: 200)
+        viewModel.itemStore.items = [card]
+        viewModel.currentId = card.id
+        viewModel.sum = 150
+
+        _ = viewModel.attemptTransfer(recipientName: "Alex")
+
+        XCTAssertEqual(viewModel.itemStore.items[0].transactions.count, 1)
+        XCTAssertEqual(viewModel.itemStore.items[0].transactions.first?.amount, -150)
+        XCTAssertEqual(viewModel.itemStore.items[0].transactions.first?.recipientName, "Alex")
     }
 
     func testFetchItems_withResults_setsDataReceivedState() async {
@@ -120,7 +134,7 @@ final class CardSelectionViewModelTests: XCTestCase {
 final class TransferSuccessViewModelTests: XCTestCase {
 
     func testFormattedAmount_includesDollarSuffix() {
-        let viewModel = TransferSuccessView.ViewModel(amount: 100, recipientName: "Alex", message: "")
+        let viewModel = TransferSuccessView.ViewModel(card: makeItem(), amount: 100, recipientName: "Alex", message: "")
 
         XCTAssertEqual(viewModel.formattedAmount, "100$")
     }
