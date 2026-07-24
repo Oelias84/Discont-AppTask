@@ -29,7 +29,7 @@ struct CardCarouselView: View {
                 }
                 .scrollTargetLayout()
             }
-            .frame(height: 194)
+            .frame(maxHeight: 194)
             .scrollTargetBehavior(.viewAligned)
             .scrollPosition(id: $currentId)
             .scrollIndicators(.hidden)

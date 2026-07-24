@@ -16,7 +16,7 @@ extension CardSelectionView {
     }
 
     enum Destination: Identifiable, Hashable {
-        case enterAmount
+        case transfer
         case success(amount: Decimal)
         case transactions
 
@@ -34,6 +34,7 @@ extension CardSelectionView {
         
         var currentId: CardModel.ID?
         var sum: Decimal?
+        var recipientName: String = ""
         var message: String = ""
 
         var screenState: ScreenState = .loading
@@ -49,16 +50,16 @@ extension CardSelectionView {
             itemStore.items.sorted { $0.title < $1.title }
         }
 
-        var formattedSum: String {
-            guard let sum else { return "" }
-            return sum.formatted(.number.precision(.fractionLength(0...2)))
-        }
-
-        var continueButtonText: String {
-            sum == nil ? "Transfer Money" : "Transfer \(formattedSum)$"
-        }
-
         func attemptTransfer(recipientName: String) -> Decimal? {
+            guard !recipientName.trimmingCharacters(in: .whitespaces).isEmpty else {
+                alert = AlertItem(
+                    id: UUID(),
+                    title: "Recipient required",
+                    message: "Please enter who you're transferring to."
+                )
+                return nil
+            }
+
             guard let sum, sum >= 0 else {
                 alert = AlertItem(
                     id: UUID(),

@@ -26,11 +26,15 @@ extension TransactionDetailView {
 
         var formattedAmount: String {
             let magnitude = abs(transaction.amount).formatted(.number.precision(.fractionLength(0...2)))
-            return transaction.amount < 0 ? "-\(magnitude)$" : "+\(magnitude)$"
+            return "\(magnitude)$"
         }
 
         var formattedDate: String {
             transaction.date.formatted(date: .abbreviated, time: .shortened)
+        }
+
+        var directionLabel: String {
+            transaction.amount < 0 ? "Sent" : "Received"
         }
 
         var category: String {

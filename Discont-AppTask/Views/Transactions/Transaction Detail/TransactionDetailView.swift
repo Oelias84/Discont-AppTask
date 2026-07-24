@@ -15,7 +15,7 @@ struct TransactionDetailView: View {
     @FocusState private var isNoteFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: . leading, spacing: 20) {
             VStack(spacing: 4) {
                 
                 Text(viewModel.formattedAmount)
@@ -30,6 +30,7 @@ struct TransactionDetailView: View {
             .frame(maxWidth: .infinity)
             .padding(.top, 8)
             
+            DSRawView(title: viewModel.directionLabel, caption: "Type")
             DSRawView(title: viewModel.transaction.recipientName, caption: "Recipient")
             DSRawView(title: viewModel.formattedDate, caption: "Date")
             DSRawView(title: viewModel.transaction.status.rawValue.capitalized, caption: "Status")

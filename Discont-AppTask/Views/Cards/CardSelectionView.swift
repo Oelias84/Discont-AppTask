@@ -12,7 +12,6 @@ struct CardSelectionView: View {
 
     @State var viewModel: ViewModel
     @State private var isRepeatingPayment = false
-    @FocusState private var isMessageFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -36,7 +35,7 @@ struct CardSelectionView: View {
         }
         .task {
             await viewModel.fetchItems()
-            viewModel.currentId = viewModel.itemStore.items.first?.id
+            viewModel.currentId = viewModel.sortedItems.first?.id
         }
         .alert(item: $viewModel.alert) {
             Alert(
@@ -55,79 +54,61 @@ struct CardSelectionView: View {
         VStack(spacing: 16) {
             
             CardCarouselView(items: viewModel.sortedItems, currentId: $viewModel.currentId)
-
+            
+            Button {
+                viewModel.showTransactions()
+            } label: {
+                HStack {
+                    Text("Transactions information")
+                    Image(systemName: "chevron.right")
+                }
+            }
+            .buttonStyle(.glassProminent)
+            .padding(.bottom)
+            
             DSRawView(
                 title: card.wrappedValue.title,
-                caption: "Card name"
+                caption: "Card Description"
+            )
+            
+            DSRawView(
+                title: card.wrappedValue.holderName,
+                caption: "Holder Name"
             )
             
             DSRawView(
                 title: card.wrappedValue.phoneNumber,
-                caption: card.wrappedValue.holderName,
-                cardInfo: .init(
-                    suffix: card.wrappedValue.suffix,
-                    type: .visa
-                )
+                caption: "Contact Information"
             )
 
-            VStack(alignment: .leading, spacing: 8) {
-                Button {
-                    viewModel.destination = .enterAmount
-                } label: {
-                    Text(viewModel.sum == nil ? "from 10$ to 99 999$" : "\(viewModel.formattedSum)$")
-                        .foregroundStyle(viewModel.sum == nil ? Color.dark.opacity(0.4) : Color.dark)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .dsTextField(title: "Sum")
-
-                Text("Commission is not charged by the bank")
-                    .font(DSFont.caption)
-                    .foregroundStyle(Color.dark.opacity(0.6))
-            }
-            .padding(.bottom, 16)
-            
-            TextField("Message to the recipient", text: $viewModel.message, axis: .vertical)
-                .lineLimit(2, reservesSpace: true)
-                .focused($isMessageFocused)
-                .padding()
-                .background(Color.lightGray)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button("Done") {
-                            isMessageFocused = false
-                        }
-                    }
-                }
-
             Spacer()
-            
-            Button("Transactions") {
-                viewModel.showTransactions()
+
+            Button("Transfer Money") {
+                viewModel.destination = .transfer
             }
             .buttonStyle(.primary)
-            
-            Button(viewModel.continueButtonText) {
-                _ = viewModel.attemptTransfer(recipientName: card.wrappedValue.holderName)
-            }
-            .buttonStyle(.primary)
+            .disabled(card.wrappedValue.amount <= 0)
             .padding(.bottom)
         }
         .padding([.top, .horizontal])
         .navigationDestination(item: $viewModel.destination) { destination in
             switch destination {
-            case .enterAmount:
-                EnterAmountView(
+            case .transfer:
+                TransferDetailsView(
                     cardTitle: card.wrappedValue.title,
                     cardBalance: card.wrappedValue.balance,
-                    amount: $viewModel.sum
+                    amount: $viewModel.sum,
+                    recipientName: $viewModel.recipientName,
+                    message: $viewModel.message,
+                    onExecute: {
+                        _ = viewModel.attemptTransfer(recipientName: viewModel.recipientName)
+                    }
                 )
 
             case .success(let amount):
                 TransferSuccessView(
                     amount: amount,
-                    recipientName: card.wrappedValue.holderName,
+                    recipientName: viewModel.recipientName,
                     message: viewModel.message,
                     onRepeat: { isRepeatingPayment = true },
                     card: card.wrappedValue
@@ -147,6 +128,7 @@ struct CardSelectionView: View {
             } else {
                 viewModel.sum = nil
                 viewModel.message = ""
+                viewModel.recipientName = ""
             }
         }
     }

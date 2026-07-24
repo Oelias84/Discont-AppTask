@@ -55,8 +55,10 @@ struct TransactionsListView: View {
             }
         }
         .navigationTitle("Transactions")
-        .task {
-            await viewModel.fetchTransactions()
+        .onAppear {
+            Task {
+                await viewModel.fetchTransactions()
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
